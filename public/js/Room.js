@@ -4405,7 +4405,7 @@ function leaveFeedback(allowCancel, disconnectAll = false) {
         imageUrl: image.feedback,
         position: 'top',
         title: 'Leave a feedback',
-        text: 'Do you want to rate your MiroTalk experience?',
+        text: 'Do you want to rate your CineMeet experience?',
         confirmButtonText: `Yes`,
         denyButtonText: `No`,
         cancelButtonText: `Cancel`,
