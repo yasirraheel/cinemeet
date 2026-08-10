@@ -18,18 +18,21 @@ class HtmlInjector {
         log.info('filesPath cached', this.filesPath);
     }
 
-    // Function to get dynamic data for injection (e.g., OG data, title, etc.)
+    // Function to get dynamic data for injection (e.g., OG data, title, APP_NAME, etc.)
     getInjectData() {
+        const appName = process.env.APP_NAME || this.config?.app?.name || 'CineMeet';
         return {
+            APP_NAME: appName,
+            APP_TITLE: `${appName} SFU`,
+            ABOUT_SLIDES_URL: process.env.ABOUT_SLIDES_URL || '',
             OG_TYPE: this.config?.og?.type || 'app-webrtc',
-            OG_SITE_NAME: this.config?.og?.siteName || 'MiroTalk SFU',
-            OG_TITLE: this.config?.og?.title || 'Click the link to make a call.',
+            OG_SITE_NAME: `${appName} SFU`,
+            OG_TITLE: this.config?.og?.title || `Click the link to start a ${appName} call.`,
             OG_DESCRIPTION:
                 this.config?.og?.description ||
-                'MiroTalk SFU calling provides real-time video calls, messaging and screen sharing.',
-            OG_IMAGE: this.config?.og?.image || 'https://sfu.mirotalk.com/images/mirotalksfu.png',
-            OG_URL: this.config?.og?.url || 'https://sfu.mirotalk.com',
-            // Add more data here as needed with fallbacks
+                `${appName} SFU powered by WebRTC and mediasoup, real-time video calls, messaging and screen sharing.`,
+            OG_IMAGE: this.config?.og?.image || '../images/logo.svg',
+            OG_URL: this.config?.og?.url || '',
         };
     }
 
@@ -78,6 +81,10 @@ class HtmlInjector {
         }
 
         if (!this.cache[filePath]) {
+            this.loadFileToCache(filePath);
+        }
+
+        if (!this.cache[filePath]) {
             log.error(`File not cached: ${filePath}`);
             if (!res.headersSent) {
                 return res.status(500).send('Server Error');
@@ -89,10 +96,10 @@ class HtmlInjector {
             const footerPath = require('path').join(__dirname, '../../public/views/footer.html');
             const footerContent = fs.existsSync(footerPath) ? fs.readFileSync(footerPath, 'utf-8') : '';
 
-            // Replace placeholders with dynamic data (OG, TITLE, FOOTER, etc.)
+            // Replace placeholders with dynamic data (APP_NAME, FOOTER, OG, etc.)
             let modifiedHTML = this.cache[filePath]
                 .replace(/{{FOOTER}}/g, footerContent)
-                .replace(/{{(OG_[A-Z_]+)}}/g, (_, key) => this.injectData[key] || '');
+                .replace(/{{([A-Z_]+)}}/g, (_, key) => (this.injectData[key] !== undefined ? this.injectData[key] : ''));
 
             if (!res.headersSent) {
                 res.send(modifiedHTML);

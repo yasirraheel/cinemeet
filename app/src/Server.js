@@ -488,6 +488,10 @@ const filesPath = [
     views.whoAreYou,
     views.activeRooms,
     views.customizeRoom,
+    views.about,
+    views.privacy,
+    views.permission,
+    views.notFound,
 ];
 
 const htmlInjector = new HtmlInjector(filesPath, config.ui.brand);
@@ -1172,17 +1176,17 @@ function startServer() {
 
     // if not allow video/audio
     app.get('/permission', (req, res) => {
-        res.sendFile(views.permission);
+        htmlInjector.injectHtml(views.permission, res);
     });
 
     // privacy policy
     app.get('/privacy', (req, res) => {
-        res.sendFile(views.privacy);
+        htmlInjector.injectHtml(views.privacy, res);
     });
 
-    // mirotalk about
+    // about
     app.get('/about', (req, res) => {
-        res.sendFile(views.about);
+        htmlInjector.injectHtml(views.about, res);
     });
 
     // Get stats endpoint

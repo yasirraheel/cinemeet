@@ -3,7 +3,7 @@
     <head>
         <!-- Title and Icon -->
 
-        <title id="title">MiroTalk SFU - About.</title>
+        <title id="title">{{APP_NAME}} SFU - About</title>
         <link id="icon" rel="shortcut icon" href="../images/logo.svg" />
         <link id="appleTouchIcon" rel="apple-touch-icon" href="../images/logo.svg" />
 
@@ -16,13 +16,158 @@
         <meta
             id="description"
             name="description"
-            content="MiroTalk SFU powered by WebRTC and mediasoup, Real-time Simple Secure Fast video calls, messaging and screen sharing capabilities in the browser."
+            content="{{APP_NAME}} SFU powered by WebRTC and Mediasoup, Real-time video calls, messaging and screen sharing."
         />
 
-        <!-- StyleSheet -->
+        <!-- StyleSheets -->
 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
         <link rel="stylesheet" type="text/css" href="../css/landing.css" />
+
+        <style>
+            .about-container {
+                max-width: 1000px;
+                margin: 40px auto;
+                padding: 0 20px;
+            }
+            .slides-deck {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16 / 9;
+                background: linear-gradient(135deg, #15171e 0%, #0d0f14 100%);
+                border-radius: 16px;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+                overflow: hidden;
+            }
+            .slide {
+                display: none;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                padding: 40px 60px;
+                text-align: center;
+                animation: fadeIn 0.4s ease-in-out;
+            }
+            .slide.active {
+                display: flex;
+            }
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            .slide-tag {
+                display: inline-block;
+                padding: 6px 16px;
+                border-radius: 20px;
+                background: rgba(2, 112, 215, 0.15);
+                color: #0270d7;
+                font-size: 13px;
+                font-weight: 600;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 20px;
+            }
+            .slide-title {
+                font-size: 34px;
+                font-weight: 700;
+                color: #ffffff;
+                margin-bottom: 16px;
+                line-height: 1.2;
+            }
+            .slide-desc {
+                font-size: 17px;
+                color: #9ba9b4;
+                max-width: 700px;
+                line-height: 1.6;
+                margin-bottom: 30px;
+            }
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+                width: 100%;
+                max-width: 800px;
+            }
+            .feature-card {
+                background: rgba(255, 255, 255, 0.04);
+                border: 1px solid rgba(255, 255, 255, 0.08);
+                border-radius: 12px;
+                padding: 20px;
+                text-align: center;
+                transition: transform 0.2s ease, border-color 0.2s ease;
+            }
+            .feature-card:hover {
+                transform: translateY(-4px);
+                border-color: #0270d7;
+            }
+            .feature-icon {
+                font-size: 28px;
+                color: #0270d7;
+                margin-bottom: 12px;
+            }
+            .feature-name {
+                font-size: 15px;
+                font-weight: 600;
+                color: #ffffff;
+                margin-bottom: 6px;
+            }
+            .feature-desc {
+                font-size: 12px;
+                color: #7b8895;
+            }
+            .slide-controls {
+                position: absolute;
+                bottom: 20px;
+                left: 0;
+                right: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 40px;
+                z-index: 10;
+            }
+            .ctrl-btn {
+                background: rgba(255, 255, 255, 0.1);
+                border: none;
+                color: #ffffff;
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background 0.2s ease;
+            }
+            .ctrl-btn:hover {
+                background: #0270d7;
+            }
+            .slide-dots {
+                display: flex;
+                gap: 8px;
+            }
+            .dot {
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                cursor: pointer;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+            .dot.active {
+                background: #0270d7;
+                transform: scale(1.3);
+            }
+        </style>
 
         <!-- Js scripts -->
 
@@ -34,20 +179,107 @@
     </head>
     <body>
         <main>
-            <div id="aboutDiv">
-                <iframe
-                    id="aboutIframe"
-                    loading="lazy"
-                    src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAE693uLOIU&#x2F;view?embed"
-                    allowfullscreen="allowfullscreen"
-                    allow="fullscreen"
-                >
-                </iframe>
+            <div class="about-container">
+                <div class="slides-deck">
+                    <!-- Slide 1 -->
+                    <div class="slide active">
+                        <span class="slide-tag">Welcome to {{APP_NAME}}</span>
+                        <h1 class="slide-title">Next-Gen Real-Time Video Conferencing</h1>
+                        <p class="slide-desc">
+                            {{APP_NAME}} SFU delivers high-performance multi-party audio, video calls, and screen sharing directly in your browser without requiring any plugins or downloads.
+                        </p>
+                    </div>
+
+                    <!-- Slide 2 -->
+                    <div class="slide">
+                        <span class="slide-tag">{{APP_NAME}} Features</span>
+                        <h2 class="slide-title">Rich Collaboration Tools</h2>
+                        <div class="features-grid">
+                            <div class="feature-card">
+                                <i class="fas fa-video feature-icon"></i>
+                                <div class="feature-name">HD Video & Audio</div>
+                                <div class="feature-desc">Adaptive WebRTC streaming with Mediasoup SFU architecture.</div>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-desktop feature-icon"></i>
+                                <div class="feature-name">Screen Sharing</div>
+                                <div class="feature-desc">Share full screen or specific application windows instantly.</div>
+                            </div>
+                            <div class="feature-card">
+                                <i class="fas fa-chalkboard feature-icon"></i>
+                                <div class="feature-name">Interactive Board</div>
+                                <div class="feature-desc">Real-time collaborative whiteboard and document tools.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Slide 3 -->
+                    <div class="slide">
+                        <span class="slide-tag">High Performance</span>
+                        <h2 class="slide-title">Powered by Mediasoup SFU</h2>
+                        <p class="slide-desc">
+                            Unlike traditional mesh P2P, {{APP_NAME}} utilizes Selective Forwarding Units (SFU) to scale seamlessly to hundreds of concurrent participants per room with minimal CPU and bandwidth usage.
+                        </p>
+                    </div>
+
+                    <!-- Slide 4 -->
+                    <div class="slide">
+                        <span class="slide-tag">Cross-Platform</span>
+                        <h2 class="slide-title">Seamless Access Anywhere</h2>
+                        <p class="slide-desc">
+                            Access {{APP_NAME}} on Desktop, Laptop, Tablet, or Smartphone using any modern WebRTC-compatible browser (Chrome, Firefox, Safari, Edge).
+                        </p>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="slide-controls">
+                        <button class="ctrl-btn" id="prevSlide" title="Previous Slide">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="slide-dots" id="dotsContainer">
+                            <span class="dot active" onclick="goToSlide(0)"></span>
+                            <span class="dot" onclick="goToSlide(1)"></span>
+                            <span class="dot" onclick="goToSlide(2)"></span>
+                            <span class="dot" onclick="goToSlide(3)"></span>
+                        </div>
+                        <button class="ctrl-btn" id="nextSlide" title="Next Slide">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
 
         {{FOOTER}}
 
+        <script>
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.slide');
+            const dots = document.querySelectorAll('.dot');
+
+            function showSlide(index) {
+                if (index < 0) currentSlide = slides.length - 1;
+                else if (index >= slides.length) currentSlide = 0;
+                else currentSlide = index;
+
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === currentSlide);
+                });
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentSlide);
+                });
+            }
+
+            function goToSlide(index) {
+                showSlide(index);
+            }
+
+            document.getElementById('prevSlide').addEventListener('click', () => showSlide(currentSlide - 1));
+            document.getElementById('nextSlide').addEventListener('click', () => showSlide(currentSlide + 1));
+
+            // Auto-advance every 6 seconds
+            setInterval(() => showSlide(currentSlide + 1), 6000);
+        </script>
         <script defer src="../js/Landing.js"></script>
         <script async defer src="https://buttons.github.io/buttons.js"></script>
     </body>
