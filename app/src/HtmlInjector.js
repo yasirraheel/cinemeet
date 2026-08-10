@@ -86,11 +86,13 @@ class HtmlInjector {
         }
 
         try {
-            // Replace placeholders with dynamic data (OG, TITLE, etc.)
-            const modifiedHTML = this.cache[filePath].replace(
-                /{{(OG_[A-Z_]+)}}/g,
-                (_, key) => this.injectData[key] || ''
-            );
+            const footerPath = require('path').join(__dirname, '../../public/views/footer.html');
+            const footerContent = fs.existsSync(footerPath) ? fs.readFileSync(footerPath, 'utf-8') : '';
+
+            // Replace placeholders with dynamic data (OG, TITLE, FOOTER, etc.)
+            let modifiedHTML = this.cache[filePath]
+                .replace(/{{FOOTER}}/g, footerContent)
+                .replace(/{{(OG_[A-Z_]+)}}/g, (_, key) => this.injectData[key] || '');
 
             if (!res.headersSent) {
                 res.send(modifiedHTML);
