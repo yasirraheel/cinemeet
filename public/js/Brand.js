@@ -264,6 +264,7 @@ function customizeApp() {
     }
     if (joinRoomBtn && BRAND.app?.joinButtonLabel) {
         joinRoomBtn.innerText = BRAND.app.joinButtonLabel;
+        if (joinRoomBtn.firstChild) joinRoomBtn.firstChild.__i18nSrc = BRAND.app.joinButtonLabel;
     }
     if (customizeRoomBtn && BRAND.app?.customizeButtonLabel) {
         customizeRoomBtn.innerText = BRAND.app.customizeButtonLabel;
