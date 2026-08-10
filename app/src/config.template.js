@@ -583,7 +583,7 @@ module.exports = {
                     ? process.env.PRESENTERS.split(splitChar)
                           .map((presenter) => presenter.trim())
                           .filter((presenter) => presenter !== '')
-                    : ['Miroslav Pejic', 'miroslav.pejic.85@gmail.com'],
+                    : ['Asif Shabbir', 'asif.shabbir@cinemeet.org'],
                 join_first: process.env.PRESENTER_JOIN_FIRST !== 'false',
             },
         },
@@ -1141,13 +1141,13 @@ module.exports = {
             app: {
                 language: process.env.UI_LANGUAGE || 'en',
                 translationMode: process.env.UI_TRANSLATION_MODE || 'google', // auto (native else Google) | native (no Google) | google (default, always Google)
-                name: process.env.APP_NAME || 'MiroTalk SFU',
+                name: process.env.APP_NAME || 'CineMeet',
                 title:
                     process.env.APP_TITLE ||
-                    '<h1>MiroTalk SFU</h1> Free browser based Real-time video calls.<br />Simple, Secure, Fast.',
+                    '<h1>CineMeet</h1>HD Video Calls, Large Webinars & Online Classes.<br />Simple, Secure, Fast.',
                 description:
                     process.env.APP_DESCRIPTION ||
-                    'Start your next video call with a single click. No download, plug-in, or login is required.',
+                    'Host interactive webinars, online classes, and multi-party video discussions with screen sharing and live chat.',
                 joinDescription: process.env.JOIN_DESCRIPTION || 'Pick a room name.<br />How about this one?',
                 joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'JOIN ROOM',
                 customizeButtonLabel: process.env.CUSTOMIZE_BUTTON_LABEL || 'CUSTOMIZE ROOM',
@@ -1160,7 +1160,7 @@ module.exports = {
              * Site-wide settings including icons and page-specific content.
              */
             site: {
-                title: process.env.SITE_TITLE || 'MiroTalk SFU, Free Video Calls, Messaging and Screen Sharing',
+                title: process.env.SITE_TITLE || 'CineMeet SFU, Free Video Calls, Messaging and Screen Sharing',
                 icon: process.env.SITE_ICON_PATH || '../images/logo.svg',
                 appleTouchIcon: process.env.APPLE_TOUCH_ICON_PATH || '../images/logo.svg',
                 newRoomTitle: process.env.NEW_ROOM_TITLE || 'Pick name. <br />Share URL. <br />Start conference.',
@@ -1176,8 +1176,8 @@ module.exports = {
             meta: {
                 description:
                     process.env.META_DESCRIPTION ||
-                    'MiroTalk SFU powered by WebRTC and mediasoup for real-time video communications.',
-                keywords: process.env.META_KEYWORDS || 'webrtc, video calls, conference, screen sharing, mirotalk, sfu',
+                    'CineMeet SFU powered by WebRTC and mediasoup for real-time video communications.',
+                keywords: process.env.META_KEYWORDS || 'webrtc, video calls, conference, screen sharing, cinemeet, sfu',
             },
 
             /**
@@ -1187,10 +1187,10 @@ module.exports = {
              */
             og: {
                 type: process.env.OG_TYPE || 'app-webrtc',
-                siteName: process.env.OG_SITE_NAME || 'MiroTalk SFU',
+                siteName: process.env.OG_SITE_NAME || 'CineMeet SFU',
                 title: process.env.OG_TITLE || 'Click the link to make a call.',
                 description:
-                    process.env.OG_DESCRIPTION || 'MiroTalk SFU provides real-time video calls and screen sharing.',
+                    process.env.OG_DESCRIPTION || 'CineMeet SFU provides real-time video calls and screen sharing.',
                 image: process.env.OG_IMAGE_URL || 'https://sfu.mirotalk.com/images/mirotalksfu.png',
                 url: process.env.OG_URL || 'https://sfu.mirotalk.com',
             },
@@ -1202,15 +1202,15 @@ module.exports = {
              * Set to 'false' via environment variables to hide.
              */
             html: {
-                topSponsors: process.env.SHOW_TOP_SPONSORS !== 'false',
+                topSponsors: process.env.SHOW_TOP_SPONSORS === 'true',
                 features: process.env.SHOW_FEATURES !== 'false',
-                teams: process.env.SHOW_TEAMS !== 'false',
+                teams: process.env.SHOW_TEAMS === 'true',
                 tryEasier: process.env.SHOW_TRY_EASIER !== 'false',
-                poweredBy: process.env.SHOW_POWERED_BY !== 'false',
-                sponsors: process.env.SHOW_SPONSORS !== 'false',
-                pastSponsors: process.env.SHOW_PAST_SPONSORS !== 'false',
-                advertisers: process.env.SHOW_ADVERTISERS !== 'false',
-                supportUs: process.env.SHOW_SUPPORT_US !== 'false',
+                poweredBy: process.env.SHOW_POWERED_BY === 'true',
+                sponsors: process.env.SHOW_SPONSORS === 'true',
+                pastSponsors: process.env.SHOW_PAST_SPONSORS === 'true',
+                advertisers: process.env.SHOW_ADVERTISERS === 'true',
+                supportUs: process.env.SHOW_SUPPORT_US === 'true',
                 footer: process.env.SHOW_FOOTER !== 'false',
             },
 
@@ -1221,7 +1221,7 @@ module.exports = {
              * Customizable text and button labels.
              */
             whoAreYou: {
-                title: process.env.WHO_ARE_YOU_TITLE || 'MiroTalk SFU - Waiting for host to start the meeting',
+                title: process.env.WHO_ARE_YOU_TITLE || 'CineMeet SFU - Waiting for host to start the meeting',
                 waitingRoomHeading: process.env.WHO_ARE_YOU_WAITING_ROOM_HEADING || 'Waiting for host...',
                 waitingRoomDescription:
                     process.env.WHO_ARE_YOU_WAITING_ROOM_DESCRIPTION ||
@@ -1257,29 +1257,18 @@ module.exports = {
              */
             about: {
                 imageUrl: process.env.ABOUT_IMAGE_URL || '../images/mirotalk-logo.gif',
-                title: `WebRTC SFU v${packageJson.version}`,
+                title: `CineMeet SFU v${packageJson.version}`,
                 html: `
-                    <button id="support-button" data-umami-event="Support button"
-                        onclick="window.open('${process.env.SUPPORT_URL || 'https://codecanyon.net/user/miroslavpejic85'}', '_blank')">
-                        <i class="fas fa-heart"></i> ${process.env.SUPPORT_TEXT || 'Support'}
-                    </button>
-                    <br />
-                    <br />
-                    ${process.env.AUTHOR_LABEL || 'Author'}: 
+                    Developer: 
                     <a id="linkedin-button" data-umami-event="Linkedin button"
-                        href="${process.env.LINKEDIN_URL || 'https://www.linkedin.com/in/miroslav-pejic-976a07101/'}" 
+                        href="${process.env.LINKEDIN_URL || 'https://www.linkedin.com/in/asif-shabbiir/'}" 
                         target="_blank">
-                        ${process.env.AUTHOR_NAME || 'Miroslav Pejic'}
+                        ${process.env.AUTHOR_NAME || 'Asif Shabbir'}
                     </a>
                     <br />
-                    ${process.env.EMAIL_LABEL || 'Email'}: 
-                    <a id="email-button" data-umami-event="Email button"
-                        href="mailto:${process.env.CONTACT_EMAIL || 'miroslav.pejic.85@gmail.com'}?subject=${process.env.EMAIL_SUBJECT || 'MiroTalk SFU info'}">
-                        ${process.env.CONTACT_EMAIL || 'miroslav.pejic.85@gmail.com'}
-                    </a>
                     <hr />
                     <span>
-                        &copy; ${new Date().getFullYear()} ${process.env.COPYRIGHT_TEXT || 'MiroTalk SFU, all rights reserved'}
+                        &copy; ${new Date().getFullYear()} ${process.env.COPYRIGHT_TEXT || 'CineMeet SFU, all rights reserved'}
                     </span>
                     <hr />
                     `,
@@ -1322,7 +1311,7 @@ module.exports = {
                         connectText: process.env.WIDGET_SUPPORT_CONNECT_TEXT || 'connect in < 5 seconds',
                         onlineText: process.env.WIDGET_SUPPORT_ONLINE_TEXT || 'We are online',
                         offlineText: process.env.WIDGET_SUPPORT_OFFLINE_TEXT || 'We are offline',
-                        poweredBy: process.env.WIDGET_SUPPORT_POWERED_BY || 'Powered by MiroTalk SFU',
+                        poweredBy: process.env.WIDGET_SUPPORT_POWERED_BY || 'Powered by CineMeet SFU',
                     },
                 },
                 alert: {
