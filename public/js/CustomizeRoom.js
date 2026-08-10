@@ -65,16 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
         shareBtn.hidden = !canWebShare;
     }
 
-    const uuidv4 = () => {
-        if (typeof crypto?.randomUUID === 'function') {
-            return crypto.randomUUID();
-        }
-        const bytes = new Uint8Array(16);
-        crypto.getRandomValues(bytes);
-        bytes[6] = (bytes[6] & 0x0f) | 0x40;
-        bytes[8] = (bytes[8] & 0x3f) | 0x80;
-        const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
-        return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+    const crAdjectives = ['Cool', 'Smart', 'Happy', 'Fast', 'Blue', 'Fresh', 'Shiny', 'Brave', 'Calm', 'Clean', 'Nice', 'Hot', 'Cold', 'Warm', 'Lucky', 'Great', 'Red', 'White', 'Black', 'Green'];
+    const crNouns = ['Fox', 'Panda', 'Owl', 'Wolf', 'Cat', 'Bear', 'Dog', 'Tiger', 'Eagle', 'Whale', 'Lion', 'Hawk', 'Falcon', 'Panther', 'Koala', 'Otter', 'Parrot', 'Turtle', 'Rabbit', 'Duck'];
+
+    const generateShortRandomRoomName = () => {
+        const adj = crAdjectives[Math.floor(Math.random() * crAdjectives.length)];
+        const noun = crNouns[Math.floor(Math.random() * crNouns.length)];
+        const num = Math.floor(10 + Math.random() * 90);
+        return adj + noun + num;
     };
 
     const normalizeDuration = (raw) => {
@@ -235,10 +233,14 @@ document.addEventListener('DOMContentLoaded', () => {
         randomRoomBtn.addEventListener('click', () => {
             setError('');
             setStatus('');
-            roomEl.value = typeof generateShortRandomRoomName === 'function' ? generateShortRandomRoomName() : uuidv4();
+            roomEl.value = generateShortRandomRoomName();
             updatePreview();
             roomEl.focus();
         });
+    }
+
+    if (roomEl && !roomEl.value) {
+        roomEl.value = generateShortRandomRoomName();
     }
 
     // Live preview
