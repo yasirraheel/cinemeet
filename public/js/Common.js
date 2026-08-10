@@ -146,17 +146,16 @@ function getRandomNumber(length) {
     return result;
 }
 
-let adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-let noun = nouns[Math.floor(Math.random() * nouns.length)];
-let num = getRandomNumber(5);
-noun = noun.charAt(0).toUpperCase() + noun.substring(1);
-adjective = adjective.charAt(0).toUpperCase() + adjective.substring(1);
+function generateShortRandomRoomName() {
+    let adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+    let noun = nouns[Math.floor(Math.random() * nouns.length)];
+    let num = getRandomNumber(2);
+    noun = noun.charAt(0).toUpperCase() + noun.substring(1);
+    adjective = adjective.charAt(0).toUpperCase() + adjective.substring(1);
+    return adjective + noun + num;
+}
 
-// ####################################################################
-// Shuffle Text Effect
-// ####################################################################
-
-let txt = num + adjective + noun;
+let txt = generateShortRandomRoomName();
 
 /**
  * Shuffle text effect for input fields
@@ -259,7 +258,7 @@ if (adultCnt) {
 
 function genRoom() {
     const input = document.getElementById('roomName');
-    shuffleText(input, getUUID4());
+    shuffleText(input, generateShortRandomRoomName());
 }
 
 function getUUID4() {

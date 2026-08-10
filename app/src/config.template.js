@@ -1149,7 +1149,7 @@ module.exports = {
                     process.env.APP_DESCRIPTION ||
                     'Host interactive webinars, online classes, and multi-party video discussions with screen sharing and live chat.',
                 joinDescription: process.env.JOIN_DESCRIPTION || 'Pick a room name.<br />How about this one?',
-                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'JOIN ROOM',
+                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || 'CREATE ROOM',
                 customizeButtonLabel: process.env.CUSTOMIZE_BUTTON_LABEL || 'CUSTOMIZE ROOM',
                 joinLastLabel: process.env.JOIN_LAST_LABEL || 'Your recent room:',
             },

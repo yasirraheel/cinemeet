@@ -235,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         randomRoomBtn.addEventListener('click', () => {
             setError('');
             setStatus('');
-            roomEl.value = uuidv4();
+            roomEl.value = typeof generateShortRandomRoomName === 'function' ? generateShortRandomRoomName() : uuidv4();
             updatePreview();
             roomEl.focus();
         });
