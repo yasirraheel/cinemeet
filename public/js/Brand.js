@@ -191,29 +191,26 @@ async function initialize() {
 }
 
 async function getBrand() {
-    if (brandData) {
-        setBrand(JSON.parse(brandData));
-    } else {
-        try {
-            const response = await fetch('/brand', { timeout: 5000 });
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            const data = await response.json();
-            const serverBrand = data.message;
-            if (serverBrand) {
-                setBrand(serverBrand);
-                console.log('FETCH BRAND SETTINGS', {
-                    serverBrand: serverBrand,
-                    clientBrand: BRAND,
-                });
-                window.sessionStorage.setItem(brandDataKey, JSON.stringify(serverBrand));
-            } else {
-                console.warn('FETCH BRAND SETTINGS - DISABLED');
-            }
-        } catch (error) {
-            console.error('FETCH GET BRAND ERROR', error.message);
+    window.sessionStorage.removeItem(brandDataKey); // Always fetch fresh brand settings from server
+    try {
+        const response = await fetch('/brand', { timeout: 5000 });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
+        const data = await response.json();
+        const serverBrand = data.message;
+        if (serverBrand) {
+            setBrand(serverBrand);
+            console.log('FETCH BRAND SETTINGS', {
+                serverBrand: serverBrand,
+                clientBrand: BRAND,
+            });
+            window.sessionStorage.setItem(brandDataKey, JSON.stringify(serverBrand));
+        } else {
+            console.warn('FETCH BRAND SETTINGS - DISABLED');
+        }
+    } catch (error) {
+        console.error('FETCH GET BRAND ERROR', error.message);
     }
 }
 

@@ -1204,7 +1204,7 @@ module.exports = {
             html: {
                 topSponsors: process.env.SHOW_TOP_SPONSORS === 'true',
                 features: process.env.SHOW_FEATURES !== 'false',
-                teams: process.env.SHOW_TEAMS === 'true',
+                teams: process.env.SHOW_TEAMS !== 'false',
                 tryEasier: process.env.SHOW_TRY_EASIER !== 'false',
                 poweredBy: process.env.SHOW_POWERED_BY === 'true',
                 sponsors: process.env.SHOW_SPONSORS === 'true',
