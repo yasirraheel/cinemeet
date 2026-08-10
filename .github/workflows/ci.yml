@@ -26,10 +26,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: docker/login-action@v3
+      - name: Log in to Docker Hub
+        if: ${{ secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_ACCESS_TOKEN != '' }}
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_ACCESS_TOKEN }}
+
+      - name: Log in to GitHub Container Registry
+        if: ${{ secrets.DOCKERHUB_USERNAME == '' }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: docker/setup-qemu-action@v3
 
@@ -42,6 +52,6 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: mirotalk/sfu:latest
-          cache-from: type=gha,scope=mirotalksfu
-          cache-to: type=gha,mode=max,scope=mirotalksfu
+          tags: ${{ secrets.DOCKERHUB_USERNAME != '' && 'mirotalk/sfu:latest' || format('ghcr.io/{0}:latest', github.repository) }}
+          cache-from: type=gha,scope=cinemeet
+          cache-to: type=gha,mode=max,scope=cinemeet
