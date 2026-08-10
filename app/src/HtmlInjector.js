@@ -24,7 +24,9 @@ class HtmlInjector {
         return {
             APP_NAME: appName,
             APP_TITLE: `${appName} SFU`,
-            ABOUT_SLIDES_URL: process.env.ABOUT_SLIDES_URL || '',
+            ABOUT_SLIDES_URL:
+                process.env.ABOUT_SLIDES_URL ||
+                'https://www.canva.com/design/DAE693uLOIU/view?embed',
             OG_TYPE: this.config?.og?.type || 'app-webrtc',
             OG_SITE_NAME: `${appName} SFU`,
             OG_TITLE: this.config?.og?.title || `Click the link to start a ${appName} call.`,
