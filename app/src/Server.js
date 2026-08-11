@@ -96,6 +96,7 @@ const Host = require('./Host');
 const Room = require('./Room');
 const Peer = require('./Peer');
 const ServerApi = require('./ServerApi');
+const AdminApiRouter = require('./AdminApiRouter');
 const Logger = require('./Logger');
 const Validator = require('./Validator');
 const HtmlInjector = require('./HtmlInjector');
@@ -845,6 +846,9 @@ function startServer() {
     app.get('/brand', (req, res) => {
         res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
     });
+
+    // Admin API — secure management endpoints for cineworm.org admin panel
+    app.use('/admin-api', AdminApiRouter);
 
     // UI themes configuration
     app.get('/themes', (req, res) => {
