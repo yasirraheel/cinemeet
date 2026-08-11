@@ -7512,15 +7512,12 @@ window.addEventListener('popstate', (event) => {
 // Intercept tab close, refresh, or direct URL navigation
 window.addEventListener('beforeunload', (e) => {
     // Save recording if in progress
-    if (rc.isRecording() || rc.hasActiveRecorder()) {
+    if (rc && (rc.isRecording() || rc.hasActiveRecorder())) {
         recShowInfo = false;
         rc.saveRecording('User is closing the tab, refreshing, or navigating away');
     }
-
-    if (bypassBeforeUnloadOnce || !preventExit || window.localStorage.isReconnected === 'true') return;
-    // Modern browsers ignore custom messages, but this triggers the prompt
-    e.preventDefault();
-    e.returnValue = '';
+    // Native beforeunload reload prompt disabled for seamless user experience
+    return;
 });
 
 // ####################################################
