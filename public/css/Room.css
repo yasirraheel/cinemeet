@@ -6153,3 +6153,87 @@ z-index:
     - 8 send receive progress
     - 9 room/user emoji
 */
+
+/* ─── Compact & Responsive Modals ─────────────────────────────────────────── */
+
+.swal2-popup {
+    max-width: 440px !important;
+    width: 90vw !important;
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    padding: 14px 18px !important;
+    border-radius: 14px !important;
+    font-size: 13px !important;
+}
+
+.swal2-title {
+    font-size: 1.1rem !important;
+    margin-bottom: 6px !important;
+    padding: 0 !important;
+}
+
+.swal2-html-container {
+    font-size: 12px !important;
+    max-height: 60vh !important;
+    overflow-y: auto !important;
+    margin: 0.4em 0 !important;
+    line-height: 1.4 !important;
+}
+
+.swal2-actions {
+    margin-top: 10px !important;
+    gap: 6px !important;
+}
+
+.swal2-actions button {
+    font-size: 12px !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+}
+
+#qrRoomContainer, #qrRoomPopupContainer {
+    max-width: 90vw !important;
+    max-height: 85vh !important;
+    padding: 12px !important;
+    border-radius: 12px !important;
+}
+
+#qrRoomPopup {
+    width: 160px !important;
+    height: 160px !important;
+    max-width: 160px !important;
+    max-height: 160px !important;
+    margin: 0 auto !important;
+}
+
+#qrRoomPopup canvas,
+#qrRoomPopup img,
+#qrRoomContainer canvas,
+#qrRoomContainer img,
+.swal2-html-container img[src*="qr"],
+.swal2-html-container canvas {
+    max-width: 150px !important;
+    max-height: 150px !important;
+    width: auto !important;
+    height: auto !important;
+    display: block !important;
+    margin: 0 auto !important;
+}
+
+@media screen and (max-height: 650px) {
+    .swal2-popup {
+        padding: 8px 12px !important;
+        max-height: 90vh !important;
+    }
+    #qrRoomPopup {
+        width: 120px !important;
+        height: 120px !important;
+    }
+    #qrRoomPopup canvas,
+    #qrRoomPopup img,
+    .swal2-html-container img[src*="qr"] {
+        max-width: 110px !important;
+        max-height: 110px !important;
+    }
+}
+
