@@ -9,10 +9,10 @@
  * Token must match ADMIN_API_TOKEN in .env
  *
  * Endpoints:
- *   GET  /admin-api/status        - Server status, uptime, rooms info
- *   GET  /admin-api/settings      - All current .env settings
- *   POST /admin-api/settings      - Update .env settings + restart
- *   POST /admin-api/restart       - Restart CineMeet via PM2
+ *   GET  /admin-api/status        - Server status, uptime, memory info
+ *   GET  /admin-api/settings      - All current settings
+ *   POST /admin-api/settings      - Dynamic in-memory + file update (NO restart required)
+ *   POST /admin-api/restart       - Restart CineMeet via PM2 (delayed execution)
  */
 
 const express = require('express');
@@ -21,7 +21,6 @@ const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 
-// Path to .env file (relative to this file: app/src/.env is at root)
 const ENV_FILE_PATH = path.resolve(__dirname, '../../.env');
 
 // ─── Auth Middleware ─────────────────────────────────────────────────────────
@@ -41,14 +40,10 @@ function requireAdminToken(req, res, next) {
     next();
 }
 
-// Apply auth to all routes
 router.use(requireAdminToken);
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-/**
- * Read and parse the .env file into a key/value object
- */
 function readEnvFile() {
     if (!fs.existsSync(ENV_FILE_PATH)) return {};
     const content = fs.readFileSync(ENV_FILE_PATH, 'utf8');
@@ -60,7 +55,6 @@ function readEnvFile() {
         if (eqIdx === -1) return;
         const key = trimmed.substring(0, eqIdx).trim();
         let value = trimmed.substring(eqIdx + 1).trim();
-        // Strip inline comments
         const commentIdx = value.indexOf(' #');
         const comment = commentIdx !== -1 ? value.substring(commentIdx) : '';
         if (commentIdx !== -1) value = value.substring(0, commentIdx).trim();
@@ -69,9 +63,6 @@ function readEnvFile() {
     return result;
 }
 
-/**
- * Write updated key/value pairs to the .env file, preserving comments and order
- */
 function writeEnvFile(updates) {
     if (!fs.existsSync(ENV_FILE_PATH)) {
         return { success: false, error: '.env file not found' };
@@ -89,7 +80,6 @@ function writeEnvFile(updates) {
 
         if (updates.hasOwnProperty(key)) {
             updatedKeys.add(key);
-            // Preserve inline comment if present
             const rest = line.substring(line.indexOf('=') + 1);
             const commentIdx = rest.indexOf(' #');
             const comment = commentIdx !== -1 ? rest.substring(commentIdx) : '';
@@ -98,11 +88,10 @@ function writeEnvFile(updates) {
         return line;
     });
 
-    // Append any new keys that didn't exist
     const newKeys = Object.keys(updates).filter((k) => !updatedKeys.has(k));
     if (newKeys.length > 0) {
         newLines.push('');
-        newLines.push('# Added by CineMeet Admin Panel');
+        newLines.push('# Added dynamically by CineMeet Admin Panel');
         newKeys.forEach((k) => newLines.push(`${k}=${updates[k]}`));
     }
 
@@ -110,9 +99,6 @@ function writeEnvFile(updates) {
     return { success: true, updatedKeys: [...updatedKeys], newKeys };
 }
 
-/**
- * Get readable .env values (filter out secrets)
- */
 const HIDDEN_KEYS = ['ADMIN_API_TOKEN', 'HOST_PASSWORD', 'OIDC_CLIENT_SECRET'];
 
 function getPublicEnvSettings() {
@@ -132,14 +118,12 @@ function getPublicEnvSettings() {
 
 /**
  * GET /admin-api/status
- * Returns server uptime, version, and basic metrics
  */
 router.get('/status', (req, res) => {
     const uptimeSeconds = Math.floor(process.uptime());
     const hours = Math.floor(uptimeSeconds / 3600);
     const minutes = Math.floor((uptimeSeconds % 3600) / 60);
     const seconds = uptimeSeconds % 60;
-
     const memUsage = process.memoryUsage();
 
     res.status(200).json({
@@ -164,18 +148,14 @@ router.get('/status', (req, res) => {
 
 /**
  * GET /admin-api/settings
- * Returns all current .env settings (secrets hidden)
  */
 router.get('/settings', (req, res) => {
     try {
         const settings = getPublicEnvSettings();
-
-        // Return as flat key: value object for easier frontend use
         const flat = {};
         Object.keys(settings).forEach((k) => {
             flat[k] = settings[k].value;
         });
-
         res.status(200).json({ success: true, settings: flat });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -184,17 +164,15 @@ router.get('/settings', (req, res) => {
 
 /**
  * POST /admin-api/settings
- * Body: { settings: { KEY: "value", ... }, restart: true|false }
- * Updates .env and optionally restarts PM2
+ * Dynamic in-memory update + file save (NO server restart required!)
  */
 router.post('/settings', (req, res) => {
-    const { settings, restart = true } = req.body;
+    const { settings, restart = false } = req.body;
 
     if (!settings || typeof settings !== 'object') {
         return res.status(400).json({ success: false, error: 'settings object is required' });
     }
 
-    // Prevent updating hidden/dangerous keys via API
     const forbidden = Object.keys(settings).filter((k) => HIDDEN_KEYS.includes(k));
     if (forbidden.length > 0) {
         return res.status(403).json({
@@ -204,34 +182,31 @@ router.post('/settings', (req, res) => {
     }
 
     try {
+        // 1. Write to persistent config file (.env)
         const result = writeEnvFile(settings);
         if (!result.success) {
             return res.status(500).json({ success: false, error: result.error });
         }
 
+        // 2. DYNAMICALLY update in-memory process.env variables INSTANTLY!
+        Object.keys(settings).forEach((key) => {
+            process.env[key] = String(settings[key]);
+        });
+
+        // 3. Send HTTP response FIRST before any optional restart
+        res.status(200).json({
+            success: true,
+            message: 'Settings saved dynamically in memory and file!',
+            result,
+        });
+
+        // 4. Optional delayed restart ONLY if explicitly requested
         if (restart) {
-            exec('pm2 restart cinemeet --update-env', (err, stdout, stderr) => {
-                if (err) {
-                    return res.status(200).json({
-                        success: true,
-                        message: 'Settings updated. PM2 restart failed (check manually).',
-                        result,
-                        restartError: err.message,
-                    });
-                }
-                res.status(200).json({
-                    success: true,
-                    message: 'Settings updated and CineMeet restarted successfully.',
-                    result,
-                    restartOutput: stdout.trim(),
+            setTimeout(() => {
+                exec('pm2 restart cinemeet --update-env', (err) => {
+                    if (err) console.error('PM2 restart error:', err);
                 });
-            });
-        } else {
-            res.status(200).json({
-                success: true,
-                message: 'Settings updated. Restart skipped.',
-                result,
-            });
+            }, 500);
         }
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
@@ -240,23 +215,18 @@ router.post('/settings', (req, res) => {
 
 /**
  * POST /admin-api/restart
- * Restarts the CineMeet PM2 process
  */
 router.post('/restart', (req, res) => {
-    exec('pm2 restart cinemeet --update-env', (err, stdout, stderr) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                error: 'PM2 restart failed',
-                details: err.message,
-            });
-        }
-        res.status(200).json({
-            success: true,
-            message: 'CineMeet restarted successfully.',
-            output: stdout.trim(),
-        });
+    res.status(200).json({
+        success: true,
+        message: 'Restart signal sent. CineMeet is restarting now.',
     });
+
+    setTimeout(() => {
+        exec('pm2 restart cinemeet --update-env', (err) => {
+            if (err) console.error('PM2 restart error:', err);
+        });
+    }, 300);
 });
 
 module.exports = router;
