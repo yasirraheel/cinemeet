@@ -939,15 +939,18 @@ body {
     border: var(--border) !important;
 }
 
-#bottomButtons #settingsExtraMenu {
+#bottomButtons #settingsExtraMenu,
+#bottomButtons #startAudioDeviceMenu,
+#bottomButtons #startVideoDeviceMenu {
     min-width: 220px !important;
-    /* Lock to intrinsic content width so Safari does not re-fit (and jump) the
-       shrink-to-fit fixed menu on hover repaint. Chrome already keeps it stable. */
     width: max-content !important;
     max-width: calc(100vw - 24px) !important;
+    max-height: 72vh !important;
+    overflow-y: auto !important;
     text-align: left;
     border: var(--border) !important;
-    padding: 8px 0;
+    padding: 6px 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
 }
 
 #bottomButtons #settingsExtraMenu .extra-menu-group {
