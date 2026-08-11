@@ -98,10 +98,17 @@ class HtmlInjector {
             const footerPath = require('path').join(__dirname, '../../public/views/footer.html');
             const footerContent = fs.existsSync(footerPath) ? fs.readFileSync(footerPath, 'utf-8') : '';
 
+            // Dynamically construct current injection data from live process.env
+            const injectData = this.getInjectData();
+
             // Replace placeholders with dynamic data (APP_NAME, FOOTER, OG, etc.)
             let modifiedHTML = this.cache[filePath]
                 .replace(/{{FOOTER}}/g, footerContent)
-                .replace(/{{([A-Z_]+)}}/g, (_, key) => (this.injectData[key] !== undefined ? this.injectData[key] : ''));
+                .replace(/{{([A-Z_]+)}}/g, (_, key) => {
+                    if (injectData[key] !== undefined) return injectData[key];
+                    if (process.env[key] !== undefined) return process.env[key];
+                    return '';
+                });
 
             if (!res.headersSent) {
                 res.send(modifiedHTML);

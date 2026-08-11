@@ -842,9 +842,60 @@ function startServer() {
         res.status(200).json({ message: config?.ui?.buttons || false });
     });
 
-    // Brand configuration
+    // Dynamic brand builder reads current process.env on every request
+    function getDynamicBrandConfig() {
+        const base = config?.ui?.brand || {};
+        return {
+            ...base,
+            app: {
+                ...(base.app || {}),
+                language: process.env.UI_LANGUAGE || base.app?.language || 'en',
+                name: process.env.APP_NAME || base.app?.name || 'CineMeet',
+                title: process.env.APP_HERO_TITLE || process.env.APP_TITLE || base.app?.title,
+                description: process.env.APP_HERO_DESCRIPTION || process.env.APP_DESCRIPTION || base.app?.description,
+                joinDescription: process.env.APP_JOIN_DESCRIPTION || process.env.JOIN_DESCRIPTION || base.app?.joinDescription,
+                joinButtonLabel: process.env.JOIN_BUTTON_LABEL || base.app?.joinButtonLabel || 'CREATE ROOM',
+                customizeButtonLabel: process.env.CUSTOMIZE_BUTTON_LABEL || base.app?.customizeButtonLabel || 'CUSTOMIZE ROOM',
+            },
+            site: {
+                ...(base.site || {}),
+                title: process.env.SEO_TITLE || process.env.SITE_TITLE || base.site?.title,
+                icon: process.env.APP_ICON || process.env.SITE_ICON_PATH || base.site?.icon,
+                appleTouchIcon: process.env.APP_APPLE_TOUCH_ICON || process.env.APPLE_TOUCH_ICON_PATH || base.site?.appleTouchIcon,
+            },
+            meta: {
+                ...(base.meta || {}),
+                description: process.env.SEO_DESCRIPTION || process.env.META_DESCRIPTION || base.meta?.description,
+                keywords: process.env.SEO_KEYWORDS || process.env.META_KEYWORDS || base.meta?.keywords,
+            },
+            og: {
+                ...(base.og || {}),
+                type: process.env.OG_TYPE || base.og?.type || 'website',
+                siteName: process.env.OG_SITE_NAME || base.og?.siteName || 'CineMeet',
+                title: process.env.OG_TITLE || base.og?.title,
+                description: process.env.OG_DESCRIPTION || base.og?.description,
+                image: process.env.OG_IMAGE || base.og?.image,
+                url: process.env.OG_URL || base.og?.url,
+            },
+            html: {
+                ...(base.html || {}),
+                topSponsors: process.env.SHOW_TOP_SPONSORS === 'true',
+                features: process.env.SHOW_FEATURES === 'true',
+                teams: process.env.SHOW_TEAMS === 'true',
+                tryEasier: process.env.SHOW_TRY_EASIER === 'true',
+                poweredBy: process.env.SHOW_POWERED_BY === 'true',
+                sponsors: process.env.SHOW_SPONSORS === 'true',
+                pastSponsors: process.env.SHOW_PAST_SPONSORS === 'true',
+                advertisers: process.env.SHOW_ADVERTISERS === 'true',
+                supportUs: process.env.SHOW_SUPPORT_US === 'true',
+                footer: process.env.SHOW_FOOTER === 'true',
+            },
+        };
+    }
+
+    // Brand configuration - returns live dynamic brand
     app.get('/brand', (req, res) => {
-        res.status(200).json({ message: brandHtmlInjection ? config?.ui?.brand : false });
+        res.status(200).json({ message: brandHtmlInjection ? getDynamicBrandConfig() : false });
     });
 
     // Admin API — secure management endpoints for cineworm.org admin panel
