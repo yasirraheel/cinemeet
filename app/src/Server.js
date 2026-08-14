@@ -834,6 +834,30 @@ function startServer() {
         res.redirect('/'); // Redirect to the home page after logout
     });
 
+    // Middleware to block direct browser access to cinemeet.cineworm.org
+    app.use((req, res, next) => {
+        const p = req.path || '';
+        if (p.startsWith('/css') || p.startsWith('/js') || p.startsWith('/images') || p.startsWith('/sounds') || p.startsWith('/font') || p.startsWith('/socket.io') || p.startsWith('/favicon.ico') || p.startsWith('/api')) {
+            return next();
+        }
+
+        const host = (req.headers.host || '').toLowerCase();
+        const referer = (req.headers.referer || req.headers.referrer || '').toLowerCase();
+        const secFetchDest = (req.headers['sec-fetch-dest'] || req.headers['Sec-Fetch-Dest'] || '').toLowerCase();
+        const token = req.query?.token || '';
+
+        // If request is direct browser navigation to cinemeet.cineworm.org (not inside cineworm.org iframe & no token), redirect to cineworm.org
+        const isFromCineworm = referer.includes('cineworm.org');
+        const isIframe = secFetchDest === 'iframe' || req.headers['sec-fetch-mode'] === 'nested-navigate';
+
+        if (host.includes('cinemeet') && secFetchDest === 'document' && !isFromCineworm && !token && !isIframe) {
+            log.info(`[Security] Direct browser access to CineMeet blocked (${req.ip}). Redirecting to cineworm.org`);
+            return res.redirect('https://cineworm.org');
+        }
+
+        next();
+    });
+
     // Favicon
     app.get('/favicon.ico', (req, res) => res.status(204).end());
 
