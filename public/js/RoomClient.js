@@ -824,7 +824,7 @@ class RoomClient {
             }
             // Host protected enabled in the server side
             if (room.hostProtected) {
-                RoomURL = window.location.origin + '/join/' + room_id;
+                RoomURL = CINEWORM_MEETING_URL + room_id;
             }
 
             // Share Media Data on Join

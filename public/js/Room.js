@@ -345,10 +345,10 @@ let isInitVideoLoaded = false;
 let audioContext = null;
 let workletNode = null;
 
-// window.location.origin + '/join/' + roomId
-// window.location.origin + '/join/?room=' + roomId + '&token=' + myToken
+// Keep shared meeting links on the CineWorm wrapper. The SFU is embedded there.
+const CINEWORM_MEETING_URL = 'https://cineworm.org/meeting/join/';
 
-let RoomURL = window.location.origin + '/join/' + room_id;
+let RoomURL = CINEWORM_MEETING_URL + room_id;
 
 let isExiting = false;
 
