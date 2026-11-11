@@ -661,8 +661,7 @@ async function refreshMyAudioDevices() {
 
 async function initEnumerateVideoDevices() {
     // allow the video
-    await navigator.mediaDevices
-        .getUserMedia({ video: true })
+    await getUserMediaWithRetry({ video: true })
         .then(async (stream) => {
             await enumerateVideoDevices(stream);
             isVideoAllowed = true;
@@ -701,8 +700,7 @@ async function enumerateVideoDevices(stream) {
 
 async function initEnumerateAudioDevices() {
     // allow the audio
-    await navigator.mediaDevices
-        .getUserMedia({ audio: true })
+    await getUserMediaWithRetry({ audio: true })
         .then(async (stream) => {
             await enumerateAudioDevices(stream);
             await getMicrophoneVolumeIndicator(stream);
@@ -754,9 +752,33 @@ async function enumerateAudioDevices(stream) {
 }
 
 async function stopTracks(stream) {
+    if (!stream) return;
     stream.getTracks().forEach((track) => {
         track.stop();
     });
+}
+
+/**
+ * Chrome can briefly keep a just-stopped camera/microphone locked while the
+ * device resource is being released. Retry only that transient condition;
+ * permission and missing-device errors should still fail immediately.
+ */
+async function getUserMediaWithRetry(constraints, attempts = 2) {
+    let lastError;
+
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+        try {
+            return await navigator.mediaDevices.getUserMedia(constraints);
+        } catch (error) {
+            lastError = error;
+            const retryable = error?.name === 'NotReadableError' || error?.name === 'TrackStartError';
+            if (!retryable || attempt === attempts) throw error;
+            console.warn(`Media device is still releasing; retrying (${attempt + 1}/${attempts})`, error);
+            await new Promise((resolve) => setTimeout(resolve, 450));
+        }
+    }
+
+    throw lastError;
 }
 
 async function addChild(device, els) {
@@ -2999,8 +3021,7 @@ async function changeCamera(deviceId) {
             aspectRatio: 1.777,
         },
     };
-    await navigator.mediaDevices
-        .getUserMedia(videoConstraints)
+    await getUserMediaWithRetry(videoConstraints)
         .then(async (camStream) => {
             initVideo.srcObject = camStream;
             initStream = camStream;
@@ -3055,7 +3076,7 @@ function handleMediaError(mediaType, err, redirectURL = false) {
             break;
         case 'NotReadableError':
         case 'TrackStartError':
-            errMessage = 'Already in use';
+            errMessage = 'Camera or microphone is already in use by another app or browser tab. Close it, then try again.';
             break;
         case 'OverconstrainedError':
         case 'ConstraintNotSatisfiedError':

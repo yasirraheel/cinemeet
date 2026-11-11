@@ -2190,7 +2190,7 @@ class RoomClient {
             } else {
                 stream = screen
                     ? await navigator.mediaDevices.getDisplayMedia(mediaConstraints)
-                    : await navigator.mediaDevices.getUserMedia(mediaConstraints);
+                    : await getUserMediaWithRetry(mediaConstraints);
 
                 // Handle Virtual Background and Blur using MediaPipe
                 if (video && isMediaStreamTrackAndTransformerSupported) {
