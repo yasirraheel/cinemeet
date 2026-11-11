@@ -846,11 +846,25 @@ function startServer() {
         const secFetchDest = (req.headers['sec-fetch-dest'] || req.headers['Sec-Fetch-Dest'] || '').toLowerCase();
         const token = req.query?.token || '';
 
-        // If request is direct browser navigation to cinemeet.cineworm.org (not inside cineworm.org iframe & no token), redirect to cineworm.org
+        // If request is direct browser navigation to cinemeet.cineworm.org (not inside cineworm.org iframe & no token), keep the top-level page on cineworm.org.
+        // Preserve the room id when a legacy/raw SFU link is opened so guests land on the public CineMeet wrapper instead of the CineMeet home page.
         const isFromCineworm = referer.includes('cineworm.org');
         const isIframe = secFetchDest === 'iframe' || req.headers['sec-fetch-mode'] === 'nested-navigate';
 
         if (host.includes('cinemeet') && secFetchDest === 'document' && !isFromCineworm && !token && !isIframe) {
+            const roomMatch = p.match(/^\/join\/([a-zA-Z0-9_-]+)\/?$/);
+            const queryRoom = typeof req.query?.room === 'string' && /^[a-zA-Z0-9_-]+$/.test(req.query.room) ? req.query.room : '';
+            const roomId = roomMatch?.[1] || queryRoom;
+
+            if (roomId) {
+                const wrapperUrl = new URL(`https://cineworm.org/meeting/join/${encodeURIComponent(roomId)}`);
+                if (typeof req.query?.roomPassword === 'string' && req.query.roomPassword.length > 0) {
+                    wrapperUrl.searchParams.set('roomPassword', req.query.roomPassword);
+                }
+                log.info(`[Security] Direct browser access to CineMeet blocked (${req.ip}). Redirecting room ${roomId} to CineWorm wrapper`);
+                return res.redirect(wrapperUrl.toString());
+            }
+
             log.info(`[Security] Direct browser access to CineMeet blocked (${req.ip}). Redirecting to cineworm.org`);
             return res.redirect('https://cineworm.org');
         }
